@@ -7,13 +7,13 @@ title: On The Road
 subtitle: ''
 description: ''
 keywords:
-author: yxs1112003
+author: yinxs2003
 language: zh-Hans
 timezone: ''
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yxs1112003.github.io
+url: http://yinxs2003.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -100,6 +100,6 @@ ignore:
 deploy:
   type: 'git'
   repository:
-    coding: https://github.com/yxs1112003/yxs1112003.github.io.git
+    coding: https://github.com/yinxs2003/yinxs2003.github.io.git
   branch: master
 

@@ -8,11 +8,11 @@ tags: 大数据
 
 Flink中用于衡量event time进度的机制叫做水印
 
+<!--more-->
+
 ## 官方定义
 
 watermark流(水印流)作为数据流的一部分，并带有一个时间戳t，当watermark t声明event time达到了t时刻，表名该数据流中不存在时间戳t`<= t的元素
-
-<!--more-->
 
 ## 对于watermark的理解
 
