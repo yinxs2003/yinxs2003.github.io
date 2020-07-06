@@ -1,7 +1,7 @@
 ---
 title: Fast文件上传
 date: 2016-06-03 10:40:30
-tags: summary
+tags: Linux
 ---
 # FastDFS系统
 ## 安装FastDFS5.08

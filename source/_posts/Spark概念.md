@@ -11,6 +11,8 @@ tags: 大数据
    1.  client 模式， driver运行在客户端，调试用 
    2. cluster模式， 分布式运行，driver运行在集群子节点 
 
+<!--more-->
+
 # RDD 
 
 ## 什么是RDD
