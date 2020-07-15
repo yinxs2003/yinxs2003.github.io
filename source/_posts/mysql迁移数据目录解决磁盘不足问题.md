@@ -1,6 +1,7 @@
 ---
 title: mysql迁移数据目录解决磁盘不足问题
 date: 2020-06-18 10:40:30
+toc: true
 tags: Linux
 categories: 
 - 技术

@@ -1,6 +1,7 @@
 ---
 title: JVM垃圾回收算法与收集器
 date: 2020-06-03 10:40:30
+toc: true
 tags: JVM
 categories: 
 - 技术

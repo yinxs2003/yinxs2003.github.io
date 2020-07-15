@@ -1,6 +1,7 @@
 ---
 title: Ambari显示heartbeat_lost问题
 date: 2020-07-10 12:00:30
+toc: true
 tags: Linux
 categories: 
 - 技术

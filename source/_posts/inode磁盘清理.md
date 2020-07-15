@@ -1,6 +1,7 @@
 ---
 title: inode磁盘清理
 date: 2020-06-15 14:44:51
+toc: true
 tags: 大数据
 categories: 
 - 技术

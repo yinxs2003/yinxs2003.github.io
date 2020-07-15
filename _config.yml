@@ -111,3 +111,7 @@ deploy:
     coding: https://github.com/yinxs2003/yinxs2003.github.io.git
   branch: master
 
+sitemap:
+    path: sitemap.xml
+baidusitemap:
+    path: baidusitemap.xml
