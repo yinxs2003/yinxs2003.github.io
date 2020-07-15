@@ -2,6 +2,8 @@
 title: ConcurrentHashMap如何实现的
 date: 2020-06-30 14:40:30
 tags: Java
+categories: 
+- 技术
 ---
 
 # Jdk1.7的ConcurrentHashMap

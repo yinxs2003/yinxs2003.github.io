@@ -2,6 +2,8 @@
 title: Java线程池
 date: 2020-06-03 10:40:30
 tags: Java
+categories: 
+- 技术
 ---
 
 文章内容

@@ -2,6 +2,8 @@
 title: Linux挂载分区parted命令
 date: 2020-06-03 10:40:30
 tags: Linux
+categories: 
+- 技术
 ---
 
 文章内容

@@ -2,6 +2,8 @@
 title: Flink窗口
 date: 2020-07-03 12:50:30
 tags: 大数据
+categories: 
+- 技术
 ---
 
 # 什么是窗口

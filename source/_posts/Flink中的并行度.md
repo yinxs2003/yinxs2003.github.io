@@ -2,6 +2,8 @@
 title: Flink中的并行度
 date: 2020-06-25 12:50:30
 tags: 大数据
+categories: 
+- 技术
 ---
 
 # Parallel Execution（并行执行）

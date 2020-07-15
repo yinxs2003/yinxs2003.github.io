@@ -2,6 +2,8 @@
 title: 手动编译安装flink，适配ambari hdp版本hadoop
 date: 2020-06-03 10:40:30
 tags: 大数据
+categories: 
+- 技术
 ---
 
 文章内容

@@ -2,6 +2,8 @@
 title: ambari集群datanode出现OOM问题
 date: 2012-06-15 14:44:51
 tags: 大数据
+categories: 
+- 技术
 ---
 
 文章内容

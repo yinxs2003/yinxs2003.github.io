@@ -2,6 +2,8 @@
 title: 面试-Kafka专题
 date: 2020-07-11 12:44:51
 tags: 面试
+categories: 
+- 技术
 ---
 
 # 使用Kafka时会遇到的问题
