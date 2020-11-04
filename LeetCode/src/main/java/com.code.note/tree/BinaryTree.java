@@ -24,6 +24,10 @@ public class BinaryTree<T extends Comparable> {
         return x;
     }
 
+    public void print(){
+        BTreePrinter.printNode(root);
+    }
+
     public void traverse() {
         traverse(root);
     }

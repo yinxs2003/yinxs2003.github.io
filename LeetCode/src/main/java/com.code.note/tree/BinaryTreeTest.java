@@ -14,10 +14,16 @@ public class BinaryTreeTest {
 
         binaryTree.traverse();
 
+        binaryTree.print();
+
         int count = binaryTree.count();
         System.out.println(count);
 
         int depth = binaryTree.getDepth();
         System.out.println(depth);
+
+        binaryTree.reverse();
+        binaryTree.print();
+
     }
 }
