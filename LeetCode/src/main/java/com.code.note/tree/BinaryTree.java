@@ -25,16 +25,55 @@ public class BinaryTree<T extends Comparable> {
     }
 
     public void traverse() {
-        traverseRecursive(root);
+        traverse(root);
     }
 
-    private void traverseRecursive(Node node) {
+    public int count() {
+        return count(root);
+    }
+
+    private int count(Node x) {
+        if (x == null) {
+            return 0;
+        }
+        return 1 + count(x.left) + count(x.right);
+    }
+
+    private void traverse(Node node) {
         // 前序遍历
         if (node == null) return;
         System.out.println(node.value);
-        traverseRecursive(node.left);
+        traverse(node.left);
         // 中序遍历
-        traverseRecursive(node.right);
+        traverse(node.right);
         // 后序遍历
+    }
+
+    //反转二叉树
+    public void reverse() {
+        reverse(root);
+    }
+
+    private void reverse(Node x) {
+
+        if (x == null) return;
+
+        Node tmp = x.left;
+        x.left = x.right;
+        x.right = tmp;
+
+        reverse(x.left);
+        reverse(x.right);
+
+    }
+
+    // 树得深度
+    public int getDepth() {
+        return getDepth(root);
+    }
+
+    private int getDepth(Node x) {
+        if (x == null) return 0;
+        return 1 + Math.max(getDepth(x.left), getDepth(x.right));
     }
 }

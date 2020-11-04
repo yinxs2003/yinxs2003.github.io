@@ -1,16 +1,23 @@
 package com.code.note.tree;
 
 public class BinaryTreeTest {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         BinaryTree<Integer> binaryTree = new BinaryTree<Integer>();
         binaryTree.put(3);
         binaryTree.put(5);
         binaryTree.put(1);
+        binaryTree.put(2);
+
         binaryTree.put(10);
 
 
         binaryTree.traverse();
 
+        int count = binaryTree.count();
+        System.out.println(count);
+
+        int depth = binaryTree.getDepth();
+        System.out.println(depth);
     }
 }
