@@ -10,9 +10,9 @@ public class BinaryTree<T extends Comparable> {
         root = put(root, value);
     }
 
-    private Node put(Node<T> x, T value) {
+    private Node<T> put(Node<T> x, T value) {
         if (x == null) {
-            return new Node(value);
+            return new Node<>(value);
         }
         int cmp = value.compareTo(x.value);
         if (cmp < 0) {
