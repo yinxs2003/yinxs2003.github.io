@@ -1,6 +1,8 @@
 package com.code.note.tree;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BinaryTree<T extends Comparable> {
     private Node<T> root;
 
@@ -24,7 +26,7 @@ public class BinaryTree<T extends Comparable> {
         return x;
     }
 
-    public void print(){
+    public void print() {
         BTreePrinter.printNode(root);
     }
 
@@ -46,7 +48,7 @@ public class BinaryTree<T extends Comparable> {
     private void traverse(Node node) {
         // 前序遍历
         if (node == null) return;
-        System.out.println(node.value);
+        log.info("{}", node.value);
         traverse(node.left);
         // 中序遍历
         traverse(node.right);

@@ -4,30 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>yinxs2003.github.io</groupId>
-    <artifactId>yinxs2003.github.io</artifactId>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>yinxs2003.github.io</groupId>
+        <artifactId>yinxs2003.github.io</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>LeetCode</groupId>
+    <artifactId>LeetCode</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>LeetCode</module>
-    </modules>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.8</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version>
-        </dependency>
-    </dependencies>
-
 
     <build>
         <plugins>
