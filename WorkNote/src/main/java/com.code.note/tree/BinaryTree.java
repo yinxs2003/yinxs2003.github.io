@@ -1,5 +1,6 @@
 package com.code.note.tree;
 
+import com.code.note.listnode.ListNode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -83,22 +84,25 @@ public class BinaryTree<T extends Comparable> {
         return 1 + Math.max(getDepth(x.left), getDepth(x.right));
     }
 
-    public Node[] toArray() {
-        Node[] arr = new Node[count()];
-        int index = 0;
-        toArray(root, arr, index);
-        return arr;
+    ListNode<Comparable> listNode = new ListNode<>();
+
+    public ListNode toListNode() {
+
+        toListNode(root);
+        return listNode;
     }
 
-    private void toArray(Node node, Node[] arr, int index) {
+
+    // 树转单链表
+    private void toListNode(Node node) {
         // 前序遍历
         if (node == null) return;
-        arr[index] = node;
-        index++;
+        listNode.addToTail(node.value);
 
-        toArray(node.left, arr, index);
+        toListNode(node.left);
         // 中序遍历
-        toArray(node.right, arr, index);
+        toListNode(node.right);
         // 后序遍历
     }
 }
+
