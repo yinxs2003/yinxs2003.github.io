@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="INFO" monitorInterval="30">
+    <appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %highlight{%5p} traceId:%36X{traceId} %c:%L - %m %throwable{separator( --> )}%n"/>
+        </console>
+        <RollingFile name="RollingFileInfo" fileName="log/info.log"
+                     filePattern="log/info.log.%d{yyyy-MM-dd}">
+            <!--<Filters>-->
+                <!--<ThresholdFilter level="warn"/>-->
+            <!--</Filters>-->
+            <PatternLayout pattern="%d %5p %c:%L [%t] - %m %throwable{separator( --> )}%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <!--指定可以排队的事件的最大数量。 默认值为128.请注意，使用disruptor-style BlockingQueue时，此缓冲区大小必须为2的乘方。-->
+        <Async name="ASYNC" bufferSize="262144" includeLocation="true">
+            <AppenderRef ref="RollingFileInfo"/>
+        </Async>
+    </appenders>
+
+    <loggers>
+        <Root level="INFO" includeLocation="true">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+        </Root>
+    </loggers>
+</configuration>
