@@ -1,10 +1,7 @@
 package com.code.note.tree;
 
+import com.code.note.listnode.ListNode;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 @Slf4j
 public class BinaryTreeTest {
@@ -14,7 +11,10 @@ public class BinaryTreeTest {
         binaryTree.put(3);
         binaryTree.put(5);
         binaryTree.put(1);
+        binaryTree.put(0);
+
         binaryTree.put(2);
+        binaryTree.put(4);
 
         binaryTree.put(10);
 
@@ -22,24 +22,19 @@ public class BinaryTreeTest {
         binaryTree.traverse();
 
         int count = binaryTree.count();
-        log.info("count:{}", count);
+        log.error("count:{}", count);
 
         int depth = binaryTree.getDepth();
-        log.info("depth:{}", depth);
+        log.error("depth:{}", depth);
 
 
         // 翻转二叉树
         binaryTree.print();
-        binaryTree.reverse();
-        binaryTree.print();
+//        binaryTree.reverse();
+//        binaryTree.print();
 
-        Node[] arr = binaryTree.toArray();
-        log.info("{}", arr);
-        Arrays.stream(arr).forEach(v -> {
-            log.info("{}", v.value);
-//        });
-
-        }
-
+        // 二叉树转链表
+        ListNode listNode = binaryTree.toListNode();
+        listNode.traverse();
     }
 }
