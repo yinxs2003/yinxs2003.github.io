@@ -11,7 +11,6 @@ public class BinaryTreeTest {
         binaryTree.put(5);
         binaryTree.put(1);
         binaryTree.put(2);
-
         binaryTree.put(10);
 
 

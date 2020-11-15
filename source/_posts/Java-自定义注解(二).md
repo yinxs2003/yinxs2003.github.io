@@ -1,5 +1,5 @@
 ---
-title: Java-自定义注解(一)
+title: Java-自定义注解（二）
 date: 2020-11-05
 toc: true
 tags: 算法
@@ -7,26 +7,29 @@ categories:
 - 技术
 ---
 
-#### 元注解@Target
-
-最常用的元注解是`@Target`。使用`@Target`可以定义`Annotation`能够被应用于源码的哪些位置：
-
-- 类或接口：`ElementType.TYPE`；
-- 字段：`ElementType.FIELD`；
-- 方法：`ElementType.METHOD`；
-- 构造方法：`ElementType.CONSTRUCTOR`；
-- 方法参数：`ElementType.PARAMETER`。
-
-例如，定义注解`@Report`可用在方法上，我们必须添加一个`@Target(ElementType.METHOD)`：
+再读完Java自定义注解（一）我们可以通过代码来实现我们自己的自定义注解
 
 #### 如何自定义注解
 
-第一步，用`@interface`定义注解：
+EventBean类
 
 ```JAVA
-public @interface Report {
-}
+package com.code.note.annotation;
 
+import lombok.Data;
+
+@Data
+public class EventBean {
+
+    @EventName("coding now...")
+    private String name;
+
+    @EventType(eventType = EventType.Type.MEETING)
+    private String type;
+
+    @User(id = 1, name = "testName", email = "15090552277@163.com")
+    private String user;
+}
 ```
 
 <!--more-->

@@ -1,5 +1,5 @@
 ---
-title: Java-自定义注解(一)
+title: Java-自定义注解
 date: 2020-11-05
 toc: true
 tags: 算法

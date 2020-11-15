@@ -84,6 +84,10 @@ public class BinaryTree<T extends Comparable> {
         return 1 + Math.max(getDepth(x.left), getDepth(x.right));
     }
 
+    public Node getRoot() {
+        return root;
+    }
+
     ListNode<Comparable> listNode = new ListNode<>();
 
     public ListNode toListNode() {
@@ -92,6 +96,10 @@ public class BinaryTree<T extends Comparable> {
         return listNode;
     }
 
+    // 删除节点
+    public void delete(T value) {
+
+    }
 
     // 树转单链表
     private void toListNode(Node node) {
