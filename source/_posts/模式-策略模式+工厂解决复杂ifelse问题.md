@@ -1,13 +1,13 @@
 ---
 title: 模式-策略模式+工厂解决复杂ifelse过多问题
-date: 2020-11-05
+date: 2021-01-27
 toc: true
 tags: Java
 categories: 
 - 技术
 ---
 
-需求背景
+## 需求背景
 
 1.按小时、天查询不同表
 
@@ -44,9 +44,26 @@ private List<MysqlBillboardCateTopviewDoc> getHourOrDayDocs(String cate, Billboa
 
 <!--more-->
 
-使用策略模式加工厂模式能够很好的解决该问题
+## 调用接口
+
+使用策略模式加工厂模式能够很好的解决该问题，使用设计模式修改后的代码，直接根据传入的类型获取结果
+
+```java
+private List<MysqlBillboardCateTopviewDoc> getHourOrDayDocs(String cate, BillboardEnum.PostType postType, BillboardEnum.SortType sortType) {
+    String key;
+    if (Strings.isNotBlank(cate)) {
+        key = CateStrategyFactory.buildKey("type", sortType);
+    } else {
+        key = CateStrategyFactory.buildKey("", sortType);
+    }
+    Strategy strategy = CateStrategyFactory.get(key);
+    return strategy.getViewDocs(cate, postType);
+}
+```
 
 
+
+## 具体实现
 
 定义了一个策略接口
 
