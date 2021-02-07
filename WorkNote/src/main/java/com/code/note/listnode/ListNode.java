@@ -56,18 +56,6 @@ public class ListNode<T> {
             x = x.next;
         }
         x.next = n;
-
-
-        /**
-         // 这里哪里不对？
-
-         Node x1 = head;
-         while (x1 != null) {
-         x1 = x1.next;
-         }
-         x1 = n;
-
-         **/
     }
 
     // 遍历
