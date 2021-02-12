@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="INFO">
+
+    <Properties>
+        <Property name="applicationName">aurora-excution-shun</Property>
+        <Property name="filenamePre">logs/${applicationName}</Property>
+        <Property name="filePatternInfo">logs/%d{yyyy-MM-dd}/${applicationName}-info-%d{yyyy-MM-dd-HH}.log</Property>
+        <Property name="filePatternWarn">logs/%d{yyyy-MM-dd}/${applicationName}-warn-%d{yyyy-MM-dd-HH}.log</Property>
+        <Property name="filePatternError">logs/%d{yyyy-MM-dd}/${applicationName}-error-%d{yyyy-MM-dd-HH}.log</Property>
+        <Property name="pattern">[%d{yyyy-MM-dd HH:mm:ss,SSS}] [%-5p] [%-5t] [%M] [%c{1}:%L] -%m%n</Property>
+        <Property name="displayName">Aurora-Excution-Seiya</Property>
+    </Properties>
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout>
+                <pattern>${pattern}</pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile name="RollingFileInfo" fileName="${filenamePre}-info.log"
+                     filePattern="${filePatternInfo}">
+
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="168"/>
+
+        </RollingFile>
+
+        <RollingFile name="RollingFileWarn" fileName="${filenamePre}-warn.log"
+                     filePattern="${filePatternWarn}">
+
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="168"/>
+
+        </RollingFile>
+
+        <RollingFile name="RollingFileError" fileName="${filenamePre}-error.log"
+                     filePattern="${filePatternError}">
+
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="168"/>
+
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+        <logger name="org.springframework" level="INFO"></logger>
+        <logger name="org.mybatis" level="INFO"></logger>
+
+        <root level="INFO">
+
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+            <appender-ref ref="RollingFileError"/>
+
+        </root>
+    </Loggers>
+</configuration>
