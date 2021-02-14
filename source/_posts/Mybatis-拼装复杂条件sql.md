@@ -2,7 +2,7 @@
 title: Mybatis拼装复杂条件sql
 date: 2021-01-27
 toc: true
-tags: Java
+tags: 技术Java
 categories: 
 - 技术
 ---

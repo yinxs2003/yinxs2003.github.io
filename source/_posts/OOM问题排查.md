@@ -2,7 +2,7 @@
 title: 常见OOM及原因分析
 date: 2020-07-06 10:40:30
 toc: true
-tags: jvm
+tags: 技术Java
 categories: 
 - 技术
 ---

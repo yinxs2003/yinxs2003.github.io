@@ -2,7 +2,7 @@
 title: Java中如何自动调用父类中的资源初始化方法
 date: 2020-10-20 10:40:30
 toc: true
-tags: Java 
+tags: 技术Java
 categories: 
 - 技术
 ---

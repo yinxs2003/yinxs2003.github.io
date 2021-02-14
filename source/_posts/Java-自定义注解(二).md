@@ -2,7 +2,7 @@
 title: Java-自定义注解（二）
 date: 2020-11-05
 toc: true
-tags: Java
+tags: 技术Java
 categories: 
 - 技术
 ---
