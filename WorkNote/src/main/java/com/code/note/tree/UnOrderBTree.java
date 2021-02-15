@@ -19,6 +19,7 @@ public class UnOrderBTree {
 
     /**
      * 是否为对称树树
+     *
      * @param root
      * @return
      */
@@ -45,6 +46,13 @@ public class UnOrderBTree {
         return flag1 && flag2;
     }
 
+    public TreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(TreeNode root) {
+        this.root = root;
+    }
 
     public static void main(String args[]) {
         UnOrderBTree t2 = new UnOrderBTree();
