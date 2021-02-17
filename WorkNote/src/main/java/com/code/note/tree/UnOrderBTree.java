@@ -10,9 +10,11 @@ public class UnOrderBTree {
 
     public TreeNode insertLevelOrder(Integer[] arr, TreeNode x, int i) {
         if (i < arr.length) {
-            x = new TreeNode(arr[i]);
-            x.left = insertLevelOrder(arr, x.left, 2 * i + 1);
-            x.right = insertLevelOrder(arr, x.right, 2 * i + 2);
+            if (arr[i] != null) {
+                x = new TreeNode(arr[i]);
+                x.left = insertLevelOrder(arr, x.left, 2 * i + 1);
+                x.right = insertLevelOrder(arr, x.right, 2 * i + 2);
+            }
         }
         return x;
     }
