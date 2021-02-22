@@ -8,6 +8,11 @@ import com.code.note.util.BTreePrinter;
 public class UnOrderBTree {
     private TreeNode root;
 
+    public void insertLevelOrder(Integer[] arr) {
+        if (root == null) root = new TreeNode();
+        root = insertLevelOrder(arr, root, 0);
+    }
+
     public TreeNode insertLevelOrder(Integer[] arr, TreeNode x, int i) {
         if (i < arr.length) {
             if (arr[i] != null) {
@@ -67,4 +72,8 @@ public class UnOrderBTree {
         System.out.println(res);
 
     }
-} 
+
+    public void print() {
+        BTreePrinter.printNode(root);
+    }
+}

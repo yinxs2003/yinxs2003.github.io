@@ -1,6 +1,6 @@
 package com.code.note.tree;
 
-import com.code.note.listnode.ListNode;
+import com.code.note.listnode.ListNodeExample;
 import com.code.note.util.BTreePrinter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,9 +89,9 @@ public class OrderTree<T extends Comparable> {
         return root;
     }
 
-    ListNode<Comparable> listNode = new ListNode<>();
+    ListNodeExample<Comparable> listNode = new ListNodeExample<>();
 
-    public ListNode toListNode() {
+    public ListNodeExample toListNode() {
 
         toListNode(root);
         return listNode;
