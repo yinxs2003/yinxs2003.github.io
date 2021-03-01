@@ -2,8 +2,8 @@ package com.code.note.tree;
 
 public class TreeNode<T extends Comparable> implements Comparable<TreeNode<T>> {
     public T val;
-    public TreeNode left;
-    public TreeNode right;
+    public TreeNode<T> left;
+    public TreeNode<T> right;
 
     public TreeNode() {
     }
