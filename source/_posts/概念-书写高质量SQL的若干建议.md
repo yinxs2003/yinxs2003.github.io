@@ -20,8 +20,6 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 ```
 
-
-
 ## 建议1
 
 查询SQL尽量不要使用select *，而是select具体字段
