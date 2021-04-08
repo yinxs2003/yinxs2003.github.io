@@ -1,5 +1,5 @@
 ---
-title: 算法-八大排序算法之堆排序
+title: Linux-Es排除节点
 date: 2021-04-08
 toc: true
 tags: Linux
