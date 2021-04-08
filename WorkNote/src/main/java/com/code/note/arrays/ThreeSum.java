@@ -1,13 +1,13 @@
 package com.code.note.arrays;
 
-import com.code.note.sort.Sort;
+import com.code.note.sort.QuickSort;
 
 import java.util.*;
 
 public class ThreeSum {
 
     public List<List<Integer>> threeSum(int[] nums) {
-        Sort.quickSort(nums, 0, nums.length - 1);
+        QuickSort.quickSort(nums, 0, nums.length - 1);
 
         Set<List<Integer>> arr = new HashSet<>();
         for (int i = 0; i < nums.length - 1; i++) {

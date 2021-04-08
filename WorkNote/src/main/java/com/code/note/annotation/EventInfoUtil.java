@@ -21,11 +21,11 @@ public class EventInfoUtil {
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(EventName.class)) {
-                eventName = (EventName) field.getAnnotation(EventName.class);
+                eventName = field.getAnnotation(EventName.class);
                 strEventName = strEventName + eventName.value();
                 System.out.println(strEventName);
             } else if (field.isAnnotationPresent(EventType.class)) {
-                eventType = (EventType) field.getAnnotation(EventType.class);
+                eventType = field.getAnnotation(EventType.class);
                 strEventType = strEventType + eventType.eventType().toString();
                 System.out.println(strEventType);
             } else if (field.isAnnotationPresent(User.class)) {
