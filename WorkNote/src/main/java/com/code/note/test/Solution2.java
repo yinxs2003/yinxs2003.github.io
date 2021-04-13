@@ -1,11 +1,11 @@
-package com.code.note.sort;
+package com.code.note.test;
 
 import com.code.note.tree.HeapNode;
 
-import java.util.Arrays;
+import java.util.PriorityQueue;
 
-public class HeapSort {
-
+public class Solution2 {
+    PriorityQueue p;
     public void buildBigHeap(int[] arr, int parent, int len) {
         int child = parent * 2 + 1;
         while (child < len) {
@@ -36,7 +36,8 @@ public class HeapSort {
         b.print();
     }
 
-    public void heapSort(int[] arr) {
+    public int findKthLargest(int[] arr, int k) {
+
         // 构建大顶堆
         for (int i = arr.length / 2; i >= 0; i--) {
             buildBigHeap(arr, i, arr.length);
@@ -44,25 +45,24 @@ public class HeapSort {
 
         print(arr);
 
-
         for (int i = arr.length - 1; i > 0; i--) {
             swap(arr, 0, i);
             buildBigHeap(arr, 0, i);
         }
-
+        return arr[arr.length - k];
     }
 
     public static void main(String[] args) {
 
-        HeapSort s = new HeapSort();
+        Solution2 s = new Solution2();
 
-        int[] arr = new int[]{3, 2, 1, 4, 5, 6, 11, -1};
+        int[] arr = new int[]{2, 1,4,123};
 
         s.print(arr);
 
-        s.heapSort(arr);
+        int a = s.findKthLargest(arr, 2);
 
 
-        System.out.println(Arrays.toString(arr));
+        System.out.println(a);
     }
 }
