@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>概念-Mysql之redolog_binglog_mvcc.md | 工作随笔</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">概念-Mysql之redolog_binglog_mvcc.md</h1><a id="logo" href="/.">工作随笔</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">概念-Mysql之redolog_binglog_mvcc.md</h1><div class="post-meta">2021-04-14<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">Contents</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前置概念"><span class="toc-number">1.</span> <span class="toc-text">前置概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RedoLog"><span class="toc-number">2.</span> <span class="toc-text">RedoLog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">2.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作用"><span class="toc-number">2.2.</span> <span class="toc-text">作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UndoLog"><span class="toc-number">3.</span> <span class="toc-text">UndoLog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UndoLog概念"><span class="toc-number">3.1.</span> <span class="toc-text">UndoLog概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UndoLog作用"><span class="toc-number">3.2.</span> <span class="toc-text">UndoLog作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UndoLog中分为两种类型"><span class="toc-number">3.3.</span> <span class="toc-text">UndoLog中分为两种类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#举个UndoLog和RedoLog合在一起的例子"><span class="toc-number">3.4.</span> <span class="toc-text">举个UndoLog和RedoLog合在一起的例子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#恢复以及无法恢复情况"><span class="toc-number">4.</span> <span class="toc-text">恢复以及无法恢复情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Binlog"><span class="toc-number">5.</span> <span class="toc-text">Binlog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Binlog作用"><span class="toc-number">5.1.</span> <span class="toc-text">Binlog作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BinLog记录了哪些内容"><span class="toc-number">5.2.</span> <span class="toc-text">BinLog记录了哪些内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Binlog是如何生成的"><span class="toc-number">5.3.</span> <span class="toc-text">Binlog是如何生成的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Binlog的删除"><span class="toc-number">5.4.</span> <span class="toc-text">Binlog的删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Binlog与RedoLog区别"><span class="toc-number">5.5.</span> <span class="toc-text">Binlog与RedoLog区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BinLog保证主从一致性"><span class="toc-number">5.6.</span> <span class="toc-text">BinLog保证主从一致性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二阶段提交"><span class="toc-number">6.</span> <span class="toc-text">二阶段提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVCC"><span class="toc-number">7.</span> <span class="toc-text">MVCC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是MVCC"><span class="toc-number">7.1.</span> <span class="toc-text">什么是MVCC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC作用"><span class="toc-number">7.2.</span> <span class="toc-text">MVCC作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快照读、当前读、"><span class="toc-number">7.3.</span> <span class="toc-text">快照读、当前读、</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#锁定读"><span class="toc-number">7.4.</span> <span class="toc-text">锁定读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一致性非锁定读"><span class="toc-number">7.5.</span> <span class="toc-text">一致性非锁定读</span></a></li></ol></li></ol></div></div><div class="post-content"><h2 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h2><ol>
+<li><p>数据库中，数据在内存中叫data buffer，数据在磁盘上叫data file。事务的日志也一样，在内存中叫log  buffer，在磁盘上叫log file。</p>
+</li>
+<li><p>data buffer中的数据会在合适的时间 由存储引擎写入到data file。并不在事务提交时机制中。</p>
+</li>
+<li><p>checkpoint</p>
+<p>checkpoint是为了定期将db buffer的内容刷新到data file。</p>
+<p>当遇到内存不足、db buffer已满等情况时，需要将db buffer中的内容/部分内容（特别是脏数据）转储到data file中。</p>
+<p>在转储时，会记录checkpoint发生的”时刻“。在故障恢复时候，<strong>只需要redo/undo最近的一次checkpoint之后的操作</strong>。</p>
+</li>
+</ol>
+<h2 id="RedoLog"><a href="#RedoLog" class="headerlink" title="RedoLog"></a>RedoLog</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>记录事务执行后的状态，用来恢复未写入磁盘的数据（data file）的已成功事务更新的数据。</p>
+<p>例如某一事务的事务序号为T1，其对数据X进行修改，设X的原值是5，修改后的值为15，那么Redo日志为15。</p>
+<p>RedoLog大多数是物理日志。</p>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ol>
+<li><p>保证了事务的<strong>持久性</strong>。</p>
+</li>
+<li><p>数据库崩溃时回复。如：A字段本来=1，设置A字段=5，内存中的数据data buffer已经改了，redo log也刷入磁盘中了，事务也提交了，但是还没来及的把A字段=5刷到磁盘中，数据库就挂了，那再恢复了数据库看到的A字段就是=1，这时就用redo log来<strong>回放</strong>把A变成=5</p>
+</li>
+<li><p>流程</p>
+<p>以一个事务为例</p>
+<p><img src="https://res-static.hc-cdn.cn/fms/img/51b37c39d64d34133b71267db37c9d091603433299270.png" alt="【八】MySQL事务之MVCC、undo、redo、binlog、二阶段提交1"></p>
+<p>重点：</p>
+<ol>
+<li><p>修改后做redo log记录。</p>
+</li>
+<li><p>log buffer刷入磁盘后，才提交事务。</p>
+</li>
+<li><p>这种先持久化日志的策略叫做Write Ahead Log，即预写日志。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="UndoLog"><a href="#UndoLog" class="headerlink" title="UndoLog"></a>UndoLog</h2><h3 id="UndoLog概念"><a href="#UndoLog概念" class="headerlink" title="UndoLog概念"></a>UndoLog概念</h3><p>用于记录事务开始前的状态，用于事务失败时的<strong>回滚</strong>操作。</p>
+<p>例如某一事务的事务序号为T1，其对数据X进行修改，设X的原值是5，修改后的值为15，那么Undo日志为5。</p>
+<p>UndoLog是<strong>逻辑日志</strong></p>
+<p><strong>重点：</strong></p>
+<ol>
+<li><p>修改前做undo log记录</p>
+</li>
+<li><p>undo log刷入磁盘后，才提交事务。</p>
+</li>
+</ol>
+<h3 id="UndoLog作用"><a href="#UndoLog作用" class="headerlink" title="UndoLog作用"></a>UndoLog作用</h3><ol>
+<li><p>保证了事务的<strong>原子性（回滚）</strong></p>
+</li>
+<li><p>实现MVCC</p>
+</li>
+<li><p>保证普通select快照读</p>
+</li>
+</ol>
+<h3 id="UndoLog中分为两种类型"><a href="#UndoLog中分为两种类型" class="headerlink" title="UndoLog中分为两种类型"></a>UndoLog中分为两种类型</h3><ol>
+<li><p>INSERT_UNDO（INSERT操作），记录插入的唯一键值；</p>
+</li>
+<li><p>UPDATE_UNDO（包含UPDATE及DELETE操作），记录修改的唯一键值以及old column记录。</p>
+</li>
+</ol>
+<h3 id="举个UndoLog和RedoLog合在一起的例子"><a href="#举个UndoLog和RedoLog合在一起的例子" class="headerlink" title="举个UndoLog和RedoLog合在一起的例子"></a>举个UndoLog和RedoLog合在一起的例子</h3><p> 假设有A、B两个数据，值分别是 1 和 2，在一个事务中先后把A设置为3，B设置为4。</p>
+<ol>
+<li><p>事务开始</p>
+</li>
+<li><p>记录A=1到undo log buffer</p>
+</li>
+<li><p>修改A=3</p>
+</li>
+<li><p>记录A=3到redo log buffer</p>
+</li>
+<li><p>记录B=2到undo log buffer</p>
+</li>
+<li><p>修改B=4</p>
+</li>
+<li><p>记录B=4到redo log buffer</p>
+</li>
+<li><p>到log buffer全部刷入到磁盘中后才提交数据</p>
+</li>
+</ol>
+<p>这里有个点，log buffer 刷入到磁盘，并<strong>不是最后要提交事物了才来一次性全部刷入到磁盘</strong>。log buffer刷入到log file是在事务进行的时候就逐步在做了。 </p>
+<h2 id="恢复以及无法恢复情况"><a href="#恢复以及无法恢复情况" class="headerlink" title="恢复以及无法恢复情况"></a>恢复以及无法恢复情况</h2><p>事务<strong>无法回滚</strong>，无法回放的情况 ：</p>
+<ol>
+<li><p>innodb_flush_log_at_trx_commit=2时，将redo日志写入logfile后，为提升事务执行的性能，存储引擎并没有调用文件系统的sync操作，将日志落盘。如果此时宕机了，那么未落盘redo日志事务的数据是无法保证一致性的。</p>
+</li>
+<li><p>UndoLog同样存在未落盘的情况，可能出现无法回滚的情况。 </p>
+<p>未提交的事务和回滚了的事务也会记录Redo Log，因此在<strong>进行恢复</strong>时,这些事务要进行特殊的的处理。进行恢复的策略如下</p>
+</li>
+</ol>
+<p>有2种不同的<strong>恢复策略</strong>：</p>
+<ol>
+<li>进行恢复时，只重做已经提交了的事务。</li>
+<li>进行恢复时，重做所有事务包括未提交的事务和回滚了的事务。然后通过Undo Log回滚那些未提交的事务。</li>
+</ol>
+<h2 id="Binlog"><a href="#Binlog" class="headerlink" title="Binlog"></a>Binlog</h2><h3 id="Binlog作用"><a href="#Binlog作用" class="headerlink" title="Binlog作用"></a>Binlog作用</h3><ol>
+<li>用于主从复制，在主从复制中，从库利用主库上的binlog进行重播，实现主从同步。</li>
+<li>用于数据库的基于时间点的还原。</li>
+</ol>
+<h3 id="BinLog记录了哪些内容"><a href="#BinLog记录了哪些内容" class="headerlink" title="BinLog记录了哪些内容"></a>BinLog记录了哪些内容</h3><p>记录的是执行过的事务中的sql语句和包括了执行的sql语句（增删改）反向的信息，比如：delete对应着delete本身和其反向的insert；update对应着update执行前后的版本的信息；insert对应着delete和insert本身的信息。</p>
+<h3 id="Binlog是如何生成的"><a href="#Binlog是如何生成的" class="headerlink" title="Binlog是如何生成的"></a>Binlog是如何生成的</h3><p>事务提交的时候一次性将事务中的sql语句按照一定的格式记录到binlog中（一个事物可能对应多个sql语句）。</p>
+<p>Binlog与RedoLog很明显的差异就是RedoLog并不一定是在事务提交的时候刷新到磁盘，RedoLog是在事务开始之后就开始逐步写入磁盘。</p>
+<p>开启了Binlog的情况下，对于较大事务的提交，可能会变得比较慢一些。</p>
+<h3 id="Binlog的删除"><a href="#Binlog的删除" class="headerlink" title="Binlog的删除"></a>Binlog的删除</h3><p>binlog的默认是保持时间由参数expire_logs_days配置，对于非活动的日志文件，在生成时间超过expire_logs_days配置的天数之后会被自动删除。</p>
+<h3 id="Binlog与RedoLog区别"><a href="#Binlog与RedoLog区别" class="headerlink" title="Binlog与RedoLog区别"></a>Binlog与RedoLog区别</h3><ol>
+<li><p>作用不同</p>
+<p>RedoLog是保证事物持久性的，是事物层面的，RedoLog通常用来恢复事务。</p>
+<p>Binlog作为还原功能是数据库层面的，Binlog通常用来在slave库重放</p>
+</li>
+<li><p>作用不同</p>
+<p>RedoLog是物理日志</p>
+<p>Binlog是逻辑日志</p>
+<p>恢复时候RedoLog效率高于Binlog</p>
+</li>
+<li><p>两者日志产生的时间，可以释放的时间，在可释放的情况下清理机制，都是完全不同的</p>
+</li>
+</ol>
+<h3 id="BinLog保证主从一致性"><a href="#BinLog保证主从一致性" class="headerlink" title="BinLog保证主从一致性"></a>BinLog保证主从一致性</h3><p>为了保证主从复制时候的主从一致（当然也包括使用binlog进行基于时间点还原的情况），事务提交时，RedoLog和binlog的写入顺序，是要严格一致的，<br>MySQL通过两阶段提交过程来完成事务的一致性的，也即RedoLog和binlog的一致性的，理论上是先写RedoLog，再写binlog，两个日志都提交成功（刷入磁盘），事务才算真正的完成。</p>
+<h2 id="二阶段提交"><a href="#二阶段提交" class="headerlink" title="二阶段提交"></a>二阶段提交</h2><p>RedoLog保证了事务的一致性，Binlog保证了主从复制的一致性</p>
+<p>先进入commit prepare 阶段：事务中新生成的RedoLog会被刷到磁盘，并将回滚段置为prepared状态。binlog不作任何操作，存储引擎写RedoLog</p>
+<p>![image-20210414111242946](/Users/yxs1112003/Library/Application Support/typora-user-images/image-20210414111242946.png)</p>
+<p>commit阶段：innodb释放锁，释放回滚段，设置RedoLog提交状态<strong>，</strong>binlog持久化到磁盘，然后存储引擎层提交，Server层写binlog</p>
+<p><img src="https://img-blog.csdnimg.cn/20200417153438295.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2p5MDIyNjg4Nzk=,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h2 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h2><h3 id="什么是MVCC"><a href="#什么是MVCC" class="headerlink" title="什么是MVCC"></a>什么是MVCC</h3><p>MVCC的全称是“多版本并发控制”。这项技术使得InnoDB的事务隔离级别下执行一致性读操作有了保证。</p>
+<p>换言之，就是为了查询一些正在被另一个事务更新的行，并且可以看到它们被更新之前的值。</p>
+<p>MVCC由于其实现原理,只支持read committed和repeatable read隔离等级</p>
+<h3 id="MVCC作用"><a href="#MVCC作用" class="headerlink" title="MVCC作用"></a>MVCC作用</h3><ol>
+<li><p>增强并发性。这样的一来查询就不用等待另一个事务释放锁。</p>
+</li>
+<li><p>在可重复读的隔离级别中，保障了单纯的select(不会加锁)的“可重复读”特性</p>
+</li>
+</ol>
+<p>这项技术在数据库领域并不是普遍使用的，其它的数据库产品，以及mysql其它的存储引擎并不支持它。</p>
+<h3 id="快照读、当前读、"><a href="#快照读、当前读、" class="headerlink" title="快照读、当前读、"></a>快照读、当前读、</h3><p>快照读：读取的是快照版本，也就是历史版本。如：普通的SELECT</p>
+<p>当前读：读取的是最新版本，如：UPDATE、DELETE、INSERT、SELECT …  LOCK IN SHARE MODE、SELECT … FOR UPDATE是当前读。</p>
+<h3 id="锁定读"><a href="#锁定读" class="headerlink" title="锁定读"></a>锁定读</h3><p>​       在一个事务中，标准的SELECT语句是不会加锁，但是有两种情况例外。</p>
+<p>​        SELECT … LOCK IN SHARE MODE</p>
+<p>　　给记录加设共享锁，这样一来的话，其它事务只能读不能修改，直到当前事务提交</p>
+<p>　　SELECT … FOR UPDATE</p>
+<p>　　给记录加排它锁，这种情况下跟UPDATE的加锁情况是一样的</p>
+<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p>事务中的单纯、标准的select读是不加锁的。而这个单纯的select不加锁的读就是<strong>一致性非锁定读</strong>，一致性非锁定读就是MVCC来保证的 </p>
+<p>一致性读（consistent read），InnoDB用多版本来提供查询数据库在某个时间点的快照</p>
+<blockquote>
+<p>如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照；</p>
+<p>如果隔离级别是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。</p>
+</blockquote>
+<p>Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式，一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们。 </p>
+</div><div class="tags"><a href="/tags/%E6%A6%82%E5%BF%B5/"><i class="fa fa-tag"></i>概念</a></div><div class="post-nav"><a class="next" href="/2021/04/08/Linux-Es%E6%8E%92%E9%99%A4%E8%8A%82%E7%82%B9/">Linux-Es排除节点</a></div><div id="container"></div><link rel="stylesheet" type="text/css" href="//unpkg.com/gitalk/dist/gitalk.css?v=0.0.0"><script type="text/javascript" src="//cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js?v=0.0.0"></script><script type="text/javascript" src="//unpkg.com/gitalk/dist/gitalk.min.js?v=0.0.0"></script><script>var gitalk = new Gitalk({
+  clientID: '6ac17303e1f9e10122e1',
+  clientSecret: '2b166cb9ead4edaac25dc0f9324b03b27cb16ffd',
+  repo: 'hexo-comments',
+  owner: 'yinxs2003',
+  admin: ['yinxs2003'],
+  id: md5(location.pathname),
+  distractionFreeMode: false
+})
+gitalk.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span class="category-list-count">73</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" style="font-size: 15px;">大数据</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/%E6%8A%80%E6%9C%AFJava/" style="font-size: 15px;">技术Java</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/tags/%E6%A6%82%E5%BF%B5/" style="font-size: 15px;">概念</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2021/04/14/%E6%A6%82%E5%BF%B5-Mysql%E4%B9%8Bredolog_binglog_mvcc/">概念-Mysql之redolog_binglog_mvcc.md</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/08/Linux-Es%E6%8E%92%E9%99%A4%E8%8A%82%E7%82%B9/">Linux-Es排除节点</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/08/%E7%AE%97%E6%B3%95-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0/">算法-数组中的第K个最大元素</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/07/%E7%AE%97%E6%B3%95-%E5%A0%86%E6%8E%92%E5%BA%8F/">算法-八大排序算法之堆排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/02/%E7%AE%97%E6%B3%95-%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/">算法-快速排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/24/%E6%A6%82%E5%BF%B5-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E9%94%81/">概念-Java内存模型</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/08/%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E6%A0%91%E5%89%AA%E6%9E%9D/">算法-二叉树剪枝</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/08/%E7%AE%97%E6%B3%95-%E9%87%8D%E5%BB%BA%E4%BA%8C%E5%8F%89%E6%A0%91/">算法-重建二叉树</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/05/%E6%A6%82%E5%BF%B5-G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A81/">概念-G1垃圾回收器1</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/05/%E6%A6%82%E5%BF%B5-G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A82/">概念-G1垃圾回收器2</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="http://heqiao2010.github.io/" title="HeQiao的博客" target="_blank">HeQiao的博客</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2021 <a href="/." rel="nofollow">工作随笔.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=0.0.0"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
