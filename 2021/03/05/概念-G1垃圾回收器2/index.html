@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>概念-G1垃圾回收器2 | 工作随笔</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/latest/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/latest/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/latest/grids-responsive-min.min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/latest/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//lib.baomitu.com/clipboard.js/latest/clipboard.min.js"></script><script type="text/javascript" src="//lib.baomitu.com/toastr.js/latest/toastr.min.js"></script><link rel="stylesheet" href="//lib.baomitu.com/toastr.js/latest/toastr.min.css"><meta name="generator" content="Hexo 4.2.1"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">概念-G1垃圾回收器2</h1><a id="logo" href="/.">工作随笔</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">概念-G1垃圾回收器2</h1><div class="post-meta">2021-03-05<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">Contents</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#G1堆结构"><span class="toc-number">1.</span> <span class="toc-text">G1堆结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1堆分配"><span class="toc-number">2.</span> <span class="toc-text">G1堆分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1年轻代"><span class="toc-number">3.</span> <span class="toc-text">G1年轻代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1的一次Young-GC"><span class="toc-number">4.</span> <span class="toc-text">G1的一次Young GC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1的YoungGC结束"><span class="toc-number">5.</span> <span class="toc-text">G1的YoungGC结束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1年老代的垃圾收集"><span class="toc-number">6.</span> <span class="toc-text">G1年老代的垃圾收集</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#G1收集阶段-并发标记周期阶段"><span class="toc-number">6.1.</span> <span class="toc-text">G1收集阶段-并发标记周期阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1老年代垃圾收集详解"><span class="toc-number">7.</span> <span class="toc-text">G1老年代垃圾收集详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#初始标记"><span class="toc-number">7.1.</span> <span class="toc-text">初始标记</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#并发标记阶段"><span class="toc-number">7.2.</span> <span class="toc-text">并发标记阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#重新标记"><span class="toc-number">7.3.</span> <span class="toc-text">重新标记</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#拷贝-清除阶段"><span class="toc-number">7.4.</span> <span class="toc-text">拷贝&#x2F;清除阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#拷贝-清除阶段之后"><span class="toc-number">7.5.</span> <span class="toc-text">拷贝&#x2F;清除阶段之后</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1年老代总结"><span class="toc-number">8.</span> <span class="toc-text">G1年老代总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#原文"><span class="toc-number">8.1.</span> <span class="toc-text">原文</span></a></li></ol></li></ol></div></div><div class="post-content"><p>G1收集器采用了另一种分配堆的方法。 后面的图片逐步检查了G1系统。</p>
+<h3 id="G1堆结构"><a href="#G1堆结构" class="headerlink" title="G1堆结构"></a>G1堆结构</h3><p>G1堆事一个内存区域被切分为多个相同大小的区域（regions）</p>
+<p><img src="/images/Slide8.png" alt="Slide8.png"></p>
+<p>区域大小是在jvm一启动就被选择的。JVM通常会生成两千个区域，每个区域大小相同，在1到32MB之间</p>
+<h3 id="G1堆分配"><a href="#G1堆分配" class="headerlink" title="G1堆分配"></a>G1堆分配</h3><p>事实上，这些区域被映射成Eden、Survivor和年老代</p>
+<p><img src="/images/G1-Slide9.png" alt="G1-Slide9.png"></p>
+<p>图片中的颜色显示了哪个区域与哪个角色相关联。 将活动对象从一个区域撤离（即复制或移动）到另一个区域。 区域被设计为并行或不停止其他应用程序线程的情况下并行垃圾收集。</p>
+<p>如图所示，区域被分成Eden、Suivivor和年老代。此外还有第四种巨大区域。这些区域被设计成存放大于标准区域50%的对象。他们被一个连续集合区域进行存储。最后一种区域是堆未使用区域。</p>
+<p>注意：在撰写本文时，尚未优化庞大对象的过程。因此应避免创建这种大小的对象。</p>
+<h3 id="G1年轻代"><a href="#G1年轻代" class="headerlink" title="G1年轻代"></a>G1年轻代</h3><p>年轻代堆被分成了大概两千个区域，区域大小在1MB到32MB之间。蓝色区域存储年老代对象，绿色区域存储年轻代对象。</p>
+<p><img src="/images/G1-Slide10.png" alt="G1-Slide10.png"></p>
+<p>注意：这些区域不需要像旧的垃圾收集器一样是内存连续的</p>
+<h3 id="G1的一次Young-GC"><a href="#G1的一次Young-GC" class="headerlink" title="G1的一次Young GC"></a>G1的一次Young GC</h3><p>存活的对象撤离（移动或者拷贝）一个或者多个存活区域，如果年龄阈值满足，一些对象会被提升到年老代区域。</p>
+<p><img src="/images/G1-Slide11.png" alt="G1-Slide11.png"></p>
+<p>这是一次stop-the-world的暂停。Eden大小和survivor大小在下一次yongGC被计算。“计票”（accounting）信息被保存用来帮助计算这些区域的大小。诸如暂停时间目标之类的事情也要考虑在内。</p>
+<p>这种方法使调整区域大小变得非常容易，可以根据需要增大或缩小区域。</p>
+<h3 id="G1的YoungGC结束"><a href="#G1的YoungGC结束" class="headerlink" title="G1的YoungGC结束"></a>G1的YoungGC结束</h3><p>存活的对象已经“撤离”到survivor区域或者年老代区域。</p>
+<p><img src="/images/G1-Slide12.png" alt="G1-Slide12.png"></p>
+<p>最近提升对象用dark blue表示，survivor区域时绿色。</p>
+<p>关于G1，总结如下：</p>
+<ol>
+<li>堆是一整个内存被切分成区域</li>
+<li>年轻代由一组不连续的区域组成，这使得改变区域大小非常容易</li>
+<li>年轻代垃圾回收或者yong GC会stop-the-world，所有的应用线程都会被停止。(Young generation garbage collections, or young GCs, are stop the world events. All application threads are stopped for the operation.)</li>
+<li>年轻的GC使用多个线程并行完成。</li>
+<li>将活动对象复制到新的幸存者或较旧的地区。</li>
+</ol>
+<h3 id="G1年老代的垃圾收集"><a href="#G1年老代的垃圾收集" class="headerlink" title="G1年老代的垃圾收集"></a>G1年老代的垃圾收集</h3><p>像CMS收集器一样，G1收集器被设计为用于旧对象的低暂停收集器。 下表描述了旧版本的G1收集阶段。</p>
+<h4 id="G1收集阶段-并发标记周期阶段"><a href="#G1收集阶段-并发标记周期阶段" class="headerlink" title="G1收集阶段-并发标记周期阶段"></a>G1收集阶段-并发标记周期阶段</h4><p>G1收集器在老年代上执行以下阶段。 请注意，某些阶段是年轻一代收集的一部分。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(1) 初始标记 <em>(Stop the World Event)</em></td>
+<td>这会stop-the-world。 对于G1来说, 它可以像普通young GC一样执行。标记survivor区域(root regions) ，因为这些区域可能引用了老年代对象。</td>
+</tr>
+<tr>
+<td>(2) 根区域扫描</td>
+<td>扫描survivor区域来获得年老代的参考（Scan survivor regions for references into the old generation），当程序在运行时会发生这种情况。这个阶段必须完成之后fullGC才能发生。</td>
+</tr>
+<tr>
+<td>(3) 并发标记</td>
+<td>在堆中查找活动对象，在应用运行时候发生，。这个阶段可以被Young GC打断。</td>
+</tr>
+<tr>
+<td>(4) 重新标记(Stop the World Event)</td>
+<td>完成堆中存活对象的标记。使用一个叫snapshot-at-the-beginning (SATB)的算法要比CMS用的算法要快的多。</td>
+</tr>
+<tr>
+<td>(5) 清除 <em>(Stop the World Event and Concurrent)</em></td>
+<td>对活动对象进行计数（accounting）和并完全清空区域。 （停止世界）<br/>清除RememberSet（RSet）。 （停止世界）<br/>重置空区域并将他们返回到空闲列表。 （并发）</td>
+</tr>
+<tr>
+<td>(<em>) Copying *(Stop the World Event)</em></td>
+<td>这些操作会stop-the-world 以保证活着的对象撤离到新的未使用的区域。该操作可以被记录为[GC pause(young)]。或者年轻、年老代区域被标记为[GC pause (mixed)].</td>
+</tr>
+</tbody></table>
+<h3 id="G1老年代垃圾收集详解"><a href="#G1老年代垃圾收集详解" class="headerlink" title="G1老年代垃圾收集详解"></a>G1老年代垃圾收集详解</h3><p>在定义了阶段之后，让我们看一下，他们如何与G1收集器中的旧版本就行交互。</p>
+<h4 id="初始标记"><a href="#初始标记" class="headerlink" title="初始标记"></a>初始标记</h4><p>初始标记对象，在年轻代被执行。在日志中被记录为GC pause (young)(inital-mark).</p>
+<p><img src="/images/G1-Slide13.png" alt="G1-Slide13.png"></p>
+<h4 id="并发标记阶段"><a href="#并发标记阶段" class="headerlink" title="并发标记阶段"></a>并发标记阶段</h4><p>如果空的区域被找到，他们在重新标记阶段会被立即移除。并且，计数（acounting）信息会决定存活度计算结果。</p>
+<p><img src="/images/G1-Slide14.png" alt="G1-Slide14.png"></p>
+<h4 id="重新标记"><a href="#重新标记" class="headerlink" title="重新标记"></a>重新标记</h4><p>空区域被删除并回收，并且在这阶段会计算所有区域的区域存活度（Region liveness ）。</p>
+<p><img src="/images/G1-Slide15.png" alt="G1-Slide15.png"></p>
+<h4 id="拷贝-清除阶段"><a href="#拷贝-清除阶段" class="headerlink" title="拷贝/清除阶段"></a>拷贝/清除阶段</h4><p>G1选择“存活度”(liveness)最低的区域，这些区域可以以最快速度被收集。这些区域在执行young GC时候被收集。在日志中被记录为[GC pause (mixed)]。所以年轻代和年老代可以被同时收集。</p>
+<h4 id="拷贝-清除阶段之后"><a href="#拷贝-清除阶段之后" class="headerlink" title="拷贝/清除阶段之后"></a>拷贝/清除阶段之后</h4><p>选定的区域被收集且被压缩，在图中分别用深蓝色和深绿色所表示</p>
+<p><img src="/images/G1-Slide17.png" alt="G1-Slide17.png"></p>
+<h3 id="G1年老代总结"><a href="#G1年老代总结" class="headerlink" title="G1年老代总结"></a>G1年老代总结</h3><p>总而言之，关于旧一代的G1垃圾回收，我们可以提出一些关键点:</p>
+<ul>
+<li>并发标记阶段<ul>
+<li>活跃度信息是在应用线程运行的被并行计算的</li>
+<li>在活着的对象“撤离”时间段内，并且这些区域即将被回收，在这个时候定义活跃度信息。</li>
+</ul>
+</li>
+<li>并发标记阶段<ul>
+<li>使用SATB算法，该算法比CMS使用的算法快得多。</li>
+<li>完全为空的区域将被回收</li>
+</ul>
+</li>
+<li>拷贝清理阶段<ul>
+<li>年轻代年老代可以同时执行回收操作</li>
+<li>年老代区域基于它们的活跃度被选择是否回收</li>
+</ul>
+</li>
+</ul>
+<p><strong>剩下的日志查看还没有翻译</strong></p>
+<h4 id="原文"><a href="#原文" class="headerlink" title="原文"></a>原文</h4><p><a href="https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html" target="_blank" rel="noopener">https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html</a></p>
+</div><div class="tags"><a href="/tags/概念"><i class="fa fa-tag">概念</i></a></div><div class="post-nav"><a class="pre" href="/2021/03/05/%E6%A6%82%E5%BF%B5-G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A81/">概念-G1垃圾回收器1</a><a class="next" href="/2021/03/05/%E6%A6%82%E5%BF%B5-Spring%E6%BA%90%E7%A0%81/">概念-Spring源码</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://yinxs2003.github.io"/></form></div><div class="widget"><div class="author-info"><a class="info-avatar" href="/about/" title="About"><img class="nofancybox" src="/img/avatar.png"/></a><p>To be a better man.</p><a class="info-icon" href="https://twitter.com/username" title="Twitter" target="_blank" style="margin-inline:5px"> <i class="fa fa-twitter-square" style="margin-inline:5px"></i></a><a class="info-icon" href="mailto:admin@domain.com" title="Email" target="_blank" style="margin-inline:5px"> <i class="fa fa-envelope-square" style="margin-inline:5px"></i></a><a class="info-icon" href="https://github.com/username" title="Github" target="_blank" style="margin-inline:5px"> <i class="fa fa-github-square" style="margin-inline:5px"></i></a><a class="info-icon" href="/atom.xml" title="RSS" target="_blank" style="margin-inline:5px"> <i class="fa fa-rss-square" style="margin-inline:5px"></i></a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" style="font-size: 15px;">大数据</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/%E6%8A%80%E6%9C%AFJava/" style="font-size: 15px;">技术Java</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/tags/%E6%A6%82%E5%BF%B5/" style="font-size: 15px;">概念</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/04/15/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">Java-jstack查看线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/05/31/%E6%A6%82%E5%BF%B5-%E5%9C%A8Spring%E4%B8%AD%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E9%97%AE%E9%A2%98/">概念-在Spring中如何解决循环依赖的问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/05/26/Java-jstack%E6%9F%A5%E7%9C%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/">Java-jstack查看线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/29/Java-%E4%BD%BF%E7%94%A8guava%E7%BC%93%E5%AD%98%E7%9A%84%E4%BE%8B%E5%AD%90/">Java-使用guava缓存的例子</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/14/%E6%A6%82%E5%BF%B5-Mysql%E4%B9%8Bredolog_binglog_mvcc/">概念-Mysql之redolog_binglog_mvcc.md</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/08/Linux-Es%E6%8E%92%E9%99%A4%E8%8A%82%E7%82%B9/">Linux-Es排除节点</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/08/%E7%AE%97%E6%B3%95-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACK%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0/">算法-数组中的第K个最大元素</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/07/%E7%AE%97%E6%B3%95-%E5%A0%86%E6%8E%92%E5%BA%8F/">算法-八大排序算法之堆排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/02/%E7%AE%97%E6%B3%95-%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/">算法-快速排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/24/%E6%A6%82%E5%BF%B5-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E9%94%81/">概念-Java内存模型</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">工作随笔.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/latest/jquery.fancybox.min.js"></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0"></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/latest/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js?v=1.0.0" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css?v=1.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
