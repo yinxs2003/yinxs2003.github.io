@@ -4,23 +4,73 @@
   
     
     <entry>
-      <title>Spring_Bean的生命周期</title>
-      <link href="/2023/05/06/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
-      <url>/2023/05/06/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
+      <title>Java-线程池</title>
+      <link href="/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+      <url>/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/</url>
       
-        <content type="html"><![CDATA[<p><img src="/../resources/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/%E6%A6%82%E8%BF%B0%EF%BC%9ABean%E5%AE%9A%E4%B9%89%E5%92%8CBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.svg" alt="概述：Bean定义和Bean的生命周期"></p>]]></content>
+        <content type="html"><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a><img src="/../resources/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/%E7%BA%BF%E7%A8%8B%E6%B1%A0.svg" alt="线程池"></h1><p>补充：</p><p>队列满时候的丢弃策略</p><ul><li>DiscardPolicy：不处理，直接丢弃掉；</li><li>AbortPolicy：直接抛出 RejectedExecutionException 异常，这是默认的拒绝策略；</li><li>DiscardOldestPolicy：丢弃最老的任务，并执行当前任务；</li><li>CallerRunsPolicy：由调用线程本身运行任务，以减缓提交速度，会阻塞主线程；</li></ul>]]></content>
       
       
       <categories>
           
-          <category> 大数据 </category>
+          <category> java基础 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 大数据 </tag>
+            <tag> 技术Java </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Spring-Bean的生命周期（二）</title>
+      <link href="/2023/05/07/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-2/"/>
+      <url>/2023/05/07/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-2/</url>
+      
+        <content type="html"><![CDATA[<p>Bean的生命周期：</p><ul><li>获取Bean的定义<ul><li>xml和annotion获取初始Bean定义</li><li>经BeanFactoryPostProcessors处理获取完整定义</li></ul></li><li>反射得到Bean对象</li><li>初始化Bean（赋值Bean属性）<ul><li>初始化普通Bean对象</li><li>初始化aware接口对象</li></ul></li><li>使用Bean</li><li>销毁Bean</li></ul><p><img src="/../resources/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-2/Bean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%B5%81%E7%A8%8B%E5%9B%BE.svg" alt="Bean生命周期流程图"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Spring </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Spring </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Spring-Bean的生命周期（一）</title>
+      <link href="/2023/05/06/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-1/"/>
+      <url>/2023/05/06/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-1/</url>
+      
+        <content type="html"><![CDATA[<p><img src="/../resources/Spring_Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/spring%E7%9A%84Bean%E5%AE%9A%E4%B9%89%E5%92%8CBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-1683398466380-4-1683398468331-6.svg" alt="spring的Bean定义和Bean的生命周期"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Spring </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Spring </tag>
             
         </tags>
       
@@ -2184,31 +2234,6 @@
       <url>/2020/06/03/JVM%E7%AE%97%E6%B3%95/</url>
       
         <content type="html"><![CDATA[<p>文章内容</p><span id="more"></span><h1 id="垃圾回收方法"><a href="#垃圾回收方法" class="headerlink" title="垃圾回收方法"></a>垃圾回收方法</h1><h2 id="标记清除算法"><a href="#标记清除算法" class="headerlink" title="标记清除算法"></a>标记清除算法</h2><p>适用：年轻带，年老带</p><p>缺点：不连续内存碎片，导致大对象直接进入年老带或者直接触发下一次GC</p><h2 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h2><p>适用：年轻带（更适合“朝生夕死”），不适用于年老带，因为可能存在100%存活的极端情况</p><p>缺点：复制算法会导致浪费一定的survivor内存空间，现在内存算法都是经过改良更适合年轻带，且堆中的Eden和2个survivor比例是 8：1：1</p><h2 id="标记整理"><a href="#标记整理" class="headerlink" title="标记整理"></a>标记整理</h2><p>适用：年老带（更适合“朝生夕死”）</p><h2 id="分带收集算法"><a href="#分带收集算法" class="headerlink" title="分带收集算法"></a>分带收集算法</h2><p>适用：根据各个年代的特点使用最适当的收集算法</p><h1 id="部分垃圾回收器"><a href="#部分垃圾回收器" class="headerlink" title="部分垃圾回收器"></a>部分垃圾回收器</h1><h2 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h2><p>初始标记（此处会stop-the-world）</p><p>并发标记</p><p>重新标记（此处会stop-the-world）</p><p>并发清除</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> java基础 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 技术Java </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Java-线程池</title>
-      <link href="/2020/06/03/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
-      <url>/2020/06/03/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/</url>
-      
-        <content type="html"><![CDATA[<p>文章内容</p><span id="more"></span><h1 id="TheadPoolExecutor"><a href="#TheadPoolExecutor" class="headerlink" title="TheadPoolExecutor"></a>TheadPoolExecutor</h1><h2 id="队列满时候的丢弃策略"><a href="#队列满时候的丢弃策略" class="headerlink" title="队列满时候的丢弃策略"></a>队列满时候的丢弃策略</h2><p>DiscardPolicy：不处理，直接丢弃掉；<br>AbortPolicy：直接抛出 RejectedExecutionException 异常，这是默认的拒绝策略；<br>DiscardOldestPolicy：丢弃最老的任务，并执行当前任务；<br>CallerRunsPolicy：由调用线程本身运行任务，以减缓提交速度，会阻塞主线程；</p>]]></content>
       
       
       <categories>
