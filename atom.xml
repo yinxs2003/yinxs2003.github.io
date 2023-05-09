@@ -6,7 +6,7 @@
   <link href="https://yinxs2003.github.io/atom.xml" rel="self"/>
   
   <link href="https://yinxs2003.github.io/"/>
-  <updated>2023-05-09T02:00:19.982Z</updated>
+  <updated>2023-05-09T02:09:02.049Z</updated>
   <id>https://yinxs2003.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://yinxs2003.github.io/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
     <id>https://yinxs2003.github.io/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/</id>
     <published>2023-05-09T02:40:30.000Z</published>
-    <updated>2023-05-09T02:00:19.982Z</updated>
+    <updated>2023-05-09T02:09:02.049Z</updated>
     
-    <content type="html"><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a><img src="/../resources/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/%E7%BA%BF%E7%A8%8B%E6%B1%A0.svg" alt="线程池"></h1><p>补充：</p><p>队列满时候的丢弃策略</p><ul><li>DiscardPolicy：不处理，直接丢弃掉；</li><li>AbortPolicy：直接抛出 RejectedExecutionException 异常，这是默认的拒绝策略；</li><li>DiscardOldestPolicy：丢弃最老的任务，并执行当前任务；</li><li>CallerRunsPolicy：由调用线程本身运行任务，以减缓提交速度，会阻塞主线程；</li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a><img src="/../resources/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/%E7%BA%BF%E7%A8%8B%E6%B1%A0.svg" alt="线程池"></h1><h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><h5 id="队列满时候的丢弃策略"><a href="#队列满时候的丢弃策略" class="headerlink" title="队列满时候的丢弃策略"></a>队列满时候的丢弃策略</h5><ul><li>DiscardPolicy：不处理，直接丢弃掉；</li><li>AbortPolicy：直接抛出 RejectedExecutionException 异常，这是默认的拒绝策略；</li><li>DiscardOldestPolicy：丢弃最老的任务，并执行当前任务；</li><li>CallerRunsPolicy：由调用线程本身运行任务，以减缓提交速度，会阻塞主线程；</li></ul><h5 id="说说submit和-execute两个方法有什么区别？"><a href="#说说submit和-execute两个方法有什么区别？" class="headerlink" title="说说submit和 execute两个方法有什么区别？"></a>说说submit和 execute两个方法有什么区别？</h5><p>submit() 和 execute() 都可以往线程池中提交任务，区别是使用 execute() 执行任务无法获取到任务执行的返回值，而使用 submit()方法， 可以使用 Future 来获取任务执行的返回值。</p><h5 id="shutdownNow-和-shutdown-两个方法有什么区别？"><a href="#shutdownNow-和-shutdown-两个方法有什么区别？" class="headerlink" title="shutdownNow() 和 shutdown() 两个方法有什么区别？"></a>shutdownNow() 和 shutdown() 两个方法有什么区别？</h5><p>shutdownNow() 和 shutdown() 都是用来终止线程池的，它们的区别是，使用 shutdown()  程序不会报错，也不会立即终止线程，它会等待线程池中的缓存任务执行完之后再退出，执行了 shutdown()  之后就不能给线程池添加新任务了；shutdownNow() 会试图立马停止任务，线程中的任务不会再执行，也无法添加新的任务。</p><h5 id="调用了shutdownNow或者shutdown，线程一定会退出么？"><a href="#调用了shutdownNow或者shutdown，线程一定会退出么？" class="headerlink" title="调用了shutdownNow或者shutdown，线程一定会退出么？"></a>调用了shutdownNow或者shutdown，线程一定会退出么？</h5><p>这个是不一定的，因为线程池会调用线程的interrupt()来打断线程的执行，但是这个方法不会打断正在运行的线程，只对正在阻塞等待的线程生效，一旦线程执行的任务类似于一个死循环，那么任务永远不会执行完，那么线程永远都不会退出。</p><h5 id="为什么线程池要使用阻塞队列？"><a href="#为什么线程池要使用阻塞队列？" class="headerlink" title="为什么线程池要使用阻塞队列？"></a>为什么线程池要使用阻塞队列？</h5><p>因为线程一旦任务执行完之后，如果想让线程不退出，只能阻塞或者自旋来保证线程不会退出，阻塞会让cpu资源，但是自旋不会，所以为了防止线程退出和减少cpu的消耗，选择使用阻塞队列来保证线程不会退出。</p>]]></content>
     
     
       
