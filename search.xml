@@ -29,6 +29,19 @@
     
     
     <entry>
+      <title></title>
+      <link href="/2023/05/17/%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D-CPU%E9%A3%99%E5%8D%87/"/>
+      <url>/2023/05/17/%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D-CPU%E9%A3%99%E5%8D%87/</url>
+      
+        <content type="html"><![CDATA[<p>1.先用top查看那个程序占用cpu多，可以知道3913这个java进程CPU使用飙高</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181614337.png" alt="image-20230423181614337"></p><p>2.使用命令ps -mp 3913 -o THREAD,tid,time查看jvm里的线程</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181744830.png" alt="image-20230423181744830"></p><p>3.可以看到tid为3936 cpu使用率异常，但3936是十进制的，使用print “%x\n” 3936命令转为16进制得到f60</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181941315.png" alt="image-20230423181941315"></p><p>4.使用jstack抓取堆栈最近20行，执行完可以知道问题出在TestController.java的第20行</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 3913 |grep f60 -A 20 </span><br></pre></td></tr></table></figure><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423182406751.png" alt="image-20230423182406751"></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Java-线程池</title>
       <link href="/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
       <url>/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/</url>
