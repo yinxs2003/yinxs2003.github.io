@@ -41,27 +41,6 @@
   </entry>
   
   <entry>
-    <title></title>
-    <link href="https://yinxs2003.github.io/2023/05/17/%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D-CPU%E9%A3%99%E5%8D%87/"/>
-    <id>https://yinxs2003.github.io/2023/05/17/%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D-CPU%E9%A3%99%E5%8D%87/</id>
-    <published>2023-05-17T02:02:01.720Z</published>
-    <updated>2023-05-17T02:03:46.534Z</updated>
-    
-    <content type="html"><![CDATA[<p>1.先用top查看那个程序占用cpu多，可以知道3913这个java进程CPU使用飙高</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181614337.png" alt="image-20230423181614337"></p><p>2.使用命令ps -mp 3913 -o THREAD,tid,time查看jvm里的线程</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181744830.png" alt="image-20230423181744830"></p><p>3.可以看到tid为3936 cpu使用率异常，但3936是十进制的，使用print “%x\n” 3936命令转为16进制得到f60</p><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423181941315.png" alt="image-20230423181941315"></p><p>4.使用jstack抓取堆栈最近20行，执行完可以知道问题出在TestController.java的第20行</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 3913 |grep f60 -A 20 </span><br></pre></td></tr></table></figure><p><img src="/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-20230423182406751.png" alt="image-20230423182406751"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;1.先用top查看那个程序占用cpu多，可以知道3913这个java进程CPU使用飙高&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/../resources/%E5%AE%9A%E4%BD%8DCPU%E9%A3%99%E5%8D%87/image-2023042318161433</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>Java-线程池</title>
     <link href="https://yinxs2003.github.io/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
     <id>https://yinxs2003.github.io/2023/05/09/Java-%E7%BA%BF%E7%A8%8B%E6%B1%A0/</id>
@@ -504,6 +483,30 @@
     <published>2023-04-23T16:00:00.000Z</published>
     <updated>2023-04-27T13:18:27.184Z</updated>
     
+    
+    
+    
+    <category term="大数据" scheme="https://yinxs2003.github.io/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+    
+    <category term="概念" scheme="https://yinxs2003.github.io/tags/%E6%A6%82%E5%BF%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>大数据-状态后端</title>
+    <link href="https://yinxs2003.github.io/2023/04/24/%E5%A4%A7%E6%95%B0%E6%8D%AE-Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF/"/>
+    <id>https://yinxs2003.github.io/2023/04/24/%E5%A4%A7%E6%95%B0%E6%8D%AE-Flink%E7%9A%84%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF/</id>
+    <published>2023-04-23T16:00:00.000Z</published>
+    <updated>2023-04-27T13:18:27.184Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="可用的State-Backend"><a href="#可用的State-Backend" class="headerlink" title="可用的State Backend"></a>可用的State Backend</h3><p>Flink提供三种开箱即用的State Backend：</p><ul><li>HashMapStateBackend </li><li>EmbeddedRocksDBStateBackend</li></ul><h3 id="HashMapStateBackend"><a href="#HashMapStateBackend" class="headerlink" title="HashMapStateBackend"></a>HashMapStateBackend</h3><p>HashMapStateBackend在java堆上保存数据，健值对的状态和windows函数使用hashtable存储值或者触发器。</p><p>HashMapStateBackend优势：</p><ul><li>job的状态（state）很大，window很长，状态的键值对很大</li><li>所有高可用性设置</li></ul><p>还建议将托管内存设置为零。 这将确保为 JVM 上的用户代码分配最大量的内存。 与 EmbeddedRocksDBStateBackend 不同，HashMapStateBackend 将数据作为对象存储在堆上，因此重用对象是不安全的。</p><h3 id="EmbeddedRocksDBStateBackend"><a href="#EmbeddedRocksDBStateBackend" class="headerlink" title="EmbeddedRocksDBStateBackend"></a>EmbeddedRocksDBStateBackend</h3><p>EmbeddedRocksDBStateBackend 将动态数据保存在 RocksDB 数据库中，该数据库（默认情况下）存储在 TaskManager 本地数据目录中。 与在 HashMapStateBackend 中存储 java 对象不同，数据存储为序列化的字节数组，主要由类型序列化器定义，因此导致键的比较是按字节进行的，而不是使用 Java 的 hashCode() 和 equals() 方法。</p><p>EmbeddedRocksDBStateBackend 始终执行异步快照。</p><p>EmbeddedRocksDBStateBackend优缺点</p><p>缺点：</p><ul><li>由于 RocksDB 的 JNI 桥接 API 基于 byte[]，每个键和每个值支持的最大大小为 2^31 字节。 在 RocksDB 中使用合并操作的状态（例如 ListState）可以静默地累积大于 2^31 字节的值大小，然后在下一次检索时失败。 这是目前 RocksDB JNI 的一个限制。</li></ul><p>优点：</p><ul><li>具有非常大状态、长窗口、大键&#x2F;值状态的作业（比HashMapStateBackend 更好的处理更大的状态）</li><li>所有高可用性设置。</li></ul><p>注意：EmbeddedRocksDBStateBackend可以保留的状态大小仅受磁盘空大小的限制。与将状态保存在内存中的 HashMapStateBackend 相比，这允许保存非常大的状态。 但是，这也意味着使用此状态后端的最大吞吐量会更低。 此后端的所有读取写都必须通过反序列化或者序列化来查询或者写入状态对象，这也比始终使用堆上表示更昂贵。由于反序列化，EmbeddedRocksDBStateBackend 可以安全地重用对象。</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在 HashMapStateBackend 和 RocksDB 之间做出选择时，它是性能和可伸缩性之间的选择。 HashMapStateBackend 非常快，因为每个状态访问和更新都对 Java 堆上的对象进行操作； 但是，状态大小受集群内可用内存的限制。 另一方面，RocksDB 可以根据可用磁盘空间进行扩展，并且是唯一支持增量快照的状态后端。 但是，每个状态访问和更新都需要（反）序列化并可能从磁盘读取，这导致平均性能比内存状态后端慢一个数量级。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;可用的State-Backend&quot;&gt;&lt;a href=&quot;#可用的State-Backend&quot; class=&quot;headerlink&quot; title=&quot;可用的State Backend&quot;&gt;&lt;/a&gt;可用的State Backend&lt;/h3&gt;&lt;p&gt;Flink提供三种开箱即用的</summary>
+      
     
     
     
